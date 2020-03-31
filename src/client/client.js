@@ -6,6 +6,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import axios from 'axios';
+import StyleContext from 'isomorphic-style-loader/StyleContext'
 
 import Routes from './routes';
 import reducers from './reducers';
@@ -20,13 +21,20 @@ const store = createStore(
     applyMiddleware(thunk.withExtraArgument(axiosInstance))
 );
 
+const insertCss = (...styles) => {
+    const removeCss = styles.map(style => style._insertCss())
+    return () => removeCss.forEach(dispose => dispose())
+}
+
 ReactDOM.hydrate(
-    <Provider store={store}>
-        <BrowserRouter>
-            <div>
-                { renderRoutes(Routes) }
-            </div>
-        </BrowserRouter>
-    </Provider>,
+    <StyleContext.Provider value={{ insertCss }}>
+        <Provider store={store}>
+            <BrowserRouter>
+                <div>
+                    { renderRoutes(Routes) }
+                </div>
+            </BrowserRouter>
+        </Provider>
+    </StyleContext.Provider>,
     document.querySelector('#root')
 );

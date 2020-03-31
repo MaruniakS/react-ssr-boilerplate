@@ -19,7 +19,28 @@ module.exports = {
                         ]
                     ]
                 }
-            }
+            },
+            {
+                test: /\.scss$/,
+                use: [
+                    {
+                        loader: 'isomorphic-style-loader',
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                localIdentName: '[name]__[local]___[hash:base64:5]',
+                            },
+                            importLoaders: 1,
+                            sourceMap: true
+                        }
+                    },
+                    {
+                        loader: 'sass-loader'
+                    }
+                ]
+            }    
         ]
     }
 }
