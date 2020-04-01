@@ -4,10 +4,13 @@ import { connect } from 'react-redux';
 import requireAuth from '../components/hocs/requireAuth';
 
 import { fetchAdmins } from '../actions';
+import { wasFetchedInitially } from '../helpers/initialPath';
 
 class AdminsList extends Component {
     componentDidMount () {
-        this.props.fetchAdmins();
+        if (!wasFetchedInitially(this.props.route.path)) {
+            this.props.fetchAdmins();
+        }
     }
 
     renderAdmins() {

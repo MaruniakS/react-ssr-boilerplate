@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { renderRoutes } from 'react-router-config';
 
 import { fetchUsers } from '../actions';
+import { wasFetchedInitially } from '../helpers/initialPath';
 
 class UsersList extends Component {
     componentDidMount () {
-        this.props.fetchUsers();
+        if (!wasFetchedInitially(this.props.route.path)) {
+            this.props.fetchUsers();
+        }
     }
 
     renderUsers() {
@@ -28,6 +32,7 @@ class UsersList extends Component {
                 { this.head() }
                 List of users:
                 <ul>{this.renderUsers()}</ul>
+                { renderRoutes(this.props.route.routes) }    
             </div>
         )
     }
@@ -40,5 +45,5 @@ const loadData = (store) => {
 
 export default {
     loadData,
-    component: connect(mapStateToProps, { fetchUsers})(UsersList)
+    component: connect(mapStateToProps, { fetchUsers })(UsersList)
 };

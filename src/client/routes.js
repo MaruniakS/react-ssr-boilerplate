@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage';
 import UsersListPage from './pages/UsersListPage';
 import AdminsListPage from './pages/AdminsListPage';
 import NotFoundPage from './pages/NotFoundPage';
+import Test from './components/Test';
 
 export default [
     {
@@ -15,7 +16,13 @@ export default [
             },
             {
                 ...UsersListPage,
-                path: '/users'
+                path: '/users',
+                routes: [
+                    {
+                        ...Test,
+                        path: '/users/test'
+                    }
+                ]
             },
             {
                 ...AdminsListPage,

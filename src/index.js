@@ -4,7 +4,6 @@ import proxy from 'express-http-proxy';
 import renderer from './helpers/renderer';
 import createStore from './helpers/createStore';
 import Routes from './client/routes';
-import { render } from 'react-dom';
 
 const app = express();
 
@@ -23,8 +22,17 @@ app.use(express.static('public'));
 app.get('*', (req, res) => {
     const store = createStore(req);
 
+    const pathsWithLoadedData= [];
+
     const promises = matchRoutes(Routes, req.path)
-        .map(({ route }) => route.loadData ? route.loadData(store) : null)
+        .map(({ route }) => {
+            if (route.loadData) {
+                route.path && pathsWithLoadedData.push(route.path);
+                return route.loadData(store);
+            } else {
+                return Promise.resolve(null);
+            }
+        })
         .map(promise => {
             if (promise) {
                 return new Promise(resolve => {
@@ -35,7 +43,7 @@ app.get('*', (req, res) => {
 
     Promise.all(promises).then(() => {
         const context = {};
-        const content = renderer(req, store, context);
+        const content = renderer({ req, store, context, pathsWithLoadedData });
 
         if (context.url) {
             return res.redirect(301, context.url);

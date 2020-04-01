@@ -9,7 +9,7 @@ import StyleContext from 'isomorphic-style-loader/StyleContext'
 
 import Routes from '../client/routes';
 
-export default (req, store, context) => {
+export default ({ req, store, context, pathsWithLoadedData = [] }) => {
     const css = new Set();
     const insertCss = (...styles) => styles.forEach(style => css.add(style._getCss()));
 
@@ -38,8 +38,9 @@ export default (req, store, context) => {
                 <div id="root">${content}</div>
                 <script>
                     window.INITIAL_STATE = ${serialize(store.getState())};
+                    window.INITIALLY_LOADED_PATHS = ${JSON.stringify(pathsWithLoadedData)};
                 </script>
-                <script src="bundle.js"></script>
+                <script src="/bundle.js"></script>
             </body>
         </html>
     `;
